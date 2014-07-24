@@ -68,24 +68,25 @@ might want to use classes and objects to define sentences, words, and paragraphs
 
 """
 # Imports
+from tkinter import *
 import re
 
-
-def average_word_length(word_list):
+# can be used for word length and sentence length
+def average_length(list):
     """ Find the average word length of a sentence """
 
     # Find the average word length of the sentence
-    word_length_list = [] #Make sure not to include punctuations in word length
-    for word in word_list:
-        word_length = len(word)
-        word_length_list.append(word_length)
+    length_list = []
+    for thing in list:
+        length = len(thing)
+        length_list.append(length)
 
     list_sum = 0
-    for i in word_length_list:
+    for i in length_list:
         list_sum += i
 
     # Be careful about the length of the floats
-    list_avg = list_sum / len(word_length_list)
+    list_avg = list_sum / len(length_list)
 
     print(list_avg)
 
@@ -103,24 +104,58 @@ def number_of_words(word_list):
     print(number_of_words)
 
 
+# The Main loop
 
-message = "Hi, my name is Kainoa"
+# The message
+message = "Hi, my name is Kainoa. This is the second sentence! This last sentence completes the paragraph.\n This is a new paragraph."
 
 # might have to split sentence into pieces
-word_list = message.split(" ")
+word_list = re.split("\W+", message)
 
 # Split message into sentences
-punct_end = [".", "?", "!"]
-for i in punct_end:
-    sentence_list = messag
-sentence_list = message.spli
+sentence_list = re.split('[.!?]', message)
 
 
 message_length(message)
 number_of_words(word_list)
 
 
-print("\nYour message is", message_length, "characters long.")
+print("\nYour message is", message_length(word_list), "words long.")
+print("\nYour message is", message_length(sentence_list), "sentences long.")
+print()
 print(word_list)
+print()
+print(sentence_list)
+print()
+# Average characters in a word of the whole message
+print("The average number of characters in a word: ", end="")
+average_length(word_list)
+print()
+# Average characters in a sentence
+print("The average number of characters in a sentence: ", end="")
+average_length(sentence_list) 
+print()
+# Average words in a sentence for the whole message
+print("The average number of words in a sentence: ", end="")
 
-average_word_length(word_list)
+print()
+
+
+
+"""
+# Build GUI
+root = Tk()
+root.title("Textual Analysis")
+root.geometry("500x250+800+300")
+
+intro = Label(root, text = "Enter Message:").grid(row = 0, column = 0, sticky = W)
+text = Text(root, width = 35, height = 5, wrap = WORD)
+text.grid(row = 0, column = 1, rowspan = 2, sticky = W)
+button = Button(root, text = "Run Code", command = number_of_words(word_list))
+button.grid(row = 0, column = 2)
+results = Label(root, text = number_of_words(word_list)) # Broken label and button
+results.grid(row = 1, column = 2)
+
+
+root.mainloop()
+"""
