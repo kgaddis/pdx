@@ -72,12 +72,12 @@ from tkinter import *
 import re
 
 # can be used for word length and sentence length
-def average_length(list):
+def average_length(lists):
     """ Find the average word length of a sentence """
 
     # Find the average word length of the sentence
     length_list = []
-    for thing in list:
+    for thing in lists:
         length = len(thing)
         length_list.append(length)
 
@@ -88,21 +88,18 @@ def average_length(list):
     # Be careful about the length of the floats
     list_avg = list_sum / len(length_list)
 
-    print(list_avg)
+    print("%.2f" % list_avg)
 
 
-def message_length(message):
-    """ Finds length of message """
-    message_length = len(message)
-    
-    return message_length
+def length(lists):
+    """ Finds length of a list """
+    length = len(lists)
+    return length
 
 
-def number_of_words(word_list):
-    """ Find number of words in a message """
-    number_of_words = len(word_list)
-    print(number_of_words)
-
+def split_up(special, string):
+    lists = re.split(special, string)
+    return lists
 
 # The Main loop
 
@@ -110,22 +107,25 @@ def number_of_words(word_list):
 message = "Hi, my name is Kainoa. This is the second sentence! This last sentence completes the paragraph.\n This is a new paragraph."
 
 # might have to split sentence into pieces
-word_list = re.split("\W+", message)
+word_list = split_up("\W+", message)
 
 # Split message into sentences
-sentence_list = re.split('[.!?]', message)
+sentence_list = split_up("[.!?]", message)
+
+#for 
 
 
-message_length(message)
-number_of_words(word_list)
-
-
-print("\nYour message is", message_length(word_list), "words long.")
-print("\nYour message is", message_length(sentence_list), "sentences long.")
-print()
+# Tests
 print(word_list)
 print()
 print(sentence_list)
+print()
+
+
+
+# Print functions
+print("\nYour message is", length(sentence_list), "sentences long.")
+print("\nYour message is", length(word_list), "words long.")
 print()
 # Average characters in a word of the whole message
 print("The average number of characters in a word: ", end="")
