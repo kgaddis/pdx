@@ -99,7 +99,10 @@ def length(lists):
 
 def split_up(special, string):
     lists = re.split(special, string)
+    if "" in lists:
+        lists.remove("")
     return lists
+
 
 # The Main loop
 
@@ -112,8 +115,10 @@ word_list = split_up("\W+", message)
 # Split message into sentences
 sentence_list = split_up("[.!?]", message)
 
+words_in_sentence = []
 for sentence in sentence_list:
     sent_words = split_up("\W+", sentence)
+    words_in_sentence.append(sent_words)
 
 
 # Tests
@@ -121,9 +126,7 @@ print(word_list)
 print()
 print(sentence_list)
 print()
-print()
-
-
+print(words_in_sentence)
 
 # Print functions
 print("\nYour message is", length(sentence_list), "sentences long.")
@@ -139,25 +142,63 @@ average_length(sentence_list)
 print()
 # Average words in a sentence for the whole message
 print("The average number of words in a sentence: ", end="")
-
+average_length(words_in_sentence)
 print()
 
 
 
-"""
-# Build GUI
-root = Tk()
-root.title("Textual Analysis")
-root.geometry("500x250+800+300")
 
+
+
+
+# Build GUI
+
+# Build Class
+class GUI(Frame):
+    """ GUI for Textual Analysis """
+    def __init__(self, master):
+        """ Initialize the frame """
+        super(GUI, self).__init__(master)
+        self.grid()
+        self.widgets()
+
+    def widgets(self):
+        """ Create labels, textbox, and buttons """
+        # Intro label
+        self.intro = Label(self, text = "Enter Message:").grid(row = 0, column = 0, sticky = W)
+        
+        # Textbox
+        self.text = Text(self, width = 35, height = 5, wrap = WORD)
+        self.text.grid(row = 0, column = 1, rowspan = 2, sticky = W)
+
+        # Button
+        self.button = Button(root, text = "Run Code", command = self.message)
+        self.button.grid(row = 0, column = 2)
+
+        # Results Label
+        results = Label(root, text = message)
+        results.grid(row = 1, column = 2)
+        
+
+    def message(self):
+        message = self.text.get()
+        
+"""
 intro = Label(root, text = "Enter Message:").grid(row = 0, column = 0, sticky = W)
-text = Text(root, width = 35, height = 5, wrap = WORD)
+text = Text(root, width = 35, height = 5, command = message, wrap = WORD)
 text.grid(row = 0, column = 1, rowspan = 2, sticky = W)
+
 button = Button(root, text = "Run Code", command = number_of_words(word_list))
 button.grid(row = 0, column = 2)
 results = Label(root, text = number_of_words(word_list)) # Broken label and button
 results.grid(row = 1, column = 2)
+"""
 
+root = Tk()
+root.title("Textual Analysis")
+root.geometry("500x250+800+300")
+
+app = GUI(root)
 
 root.mainloop()
-"""
+
