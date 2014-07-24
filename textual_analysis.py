@@ -71,6 +71,42 @@ might want to use classes and objects to define sentences, words, and paragraphs
 from tkinter import *
 import re
 
+# Build GUI class
+class GUI(Frame):
+    """ GUI for Textual Analysis """
+    def __init__(self, master):
+        """ Initialize the frame """
+        super(GUI, self).__init__(master)
+        self.grid()
+        self.widgets()
+
+    def widgets(self):
+        """ Create labels, textbox, and buttons """
+        # Intro label
+        self.intro = Label(self, text = "Enter Message:").grid(row = 0, column = 0, sticky = W)
+        
+        # Textbox
+        self.text = Entry(self)
+        self.text.grid(row = 0, column = 1, sticky = W)
+
+        # Button
+        self.button = Button(root, text = "Run Code", command = self.message)
+        self.button.grid(row = 0, column = 2)
+
+        # Results label
+        self.results = Label(root, text = None)
+        self.results.grid(row = 1, column = 0)
+        
+        # Results textbox
+        
+
+    def message(self):
+        message = self.text.get()
+        self.results["text"] = message
+        return message
+
+# Functions
+
 # can be used for word length and sentence length
 def average_length(lists):
     """ Find the average word length of a sentence """
@@ -105,9 +141,14 @@ def split_up(special, string):
 
 
 # The Main loop
+root = Tk()
+root.title("Textual Analysis")
+root.geometry("500x250+800+300")
+
+app = GUI(root)
 
 # The message
-message = "Hi, my name is Kainoa. This is the second sentence! This last sentence completes the paragraph.\n This is a new paragraph."
+message = app.message()
 
 # might have to split sentence into pieces
 word_list = split_up("\W+", message)
@@ -121,7 +162,12 @@ for sentence in sentence_list:
     words_in_sentence.append(sent_words)
 
 
+
+
+
 # Tests
+print(message)
+print ()
 print(word_list)
 print()
 print(sentence_list)
@@ -133,7 +179,7 @@ print("\nYour message is", length(sentence_list), "sentences long.")
 print("\nYour message is", length(word_list), "words long.")
 print()
 # Average characters in a word of the whole message
-print("The average number of characters in a word: ", end="")
+print("The average number of letters in a word: ", end="")
 average_length(word_list)
 print()
 # Average characters in a sentence
@@ -145,60 +191,4 @@ print("The average number of words in a sentence: ", end="")
 average_length(words_in_sentence)
 print()
 
-
-
-
-
-
-
-# Build GUI
-
-# Build Class
-class GUI(Frame):
-    """ GUI for Textual Analysis """
-    def __init__(self, master):
-        """ Initialize the frame """
-        super(GUI, self).__init__(master)
-        self.grid()
-        self.widgets()
-
-    def widgets(self):
-        """ Create labels, textbox, and buttons """
-        # Intro label
-        self.intro = Label(self, text = "Enter Message:").grid(row = 0, column = 0, sticky = W)
-        
-        # Textbox
-        self.text = Text(self, width = 35, height = 5, wrap = WORD)
-        self.text.grid(row = 0, column = 1, rowspan = 2, sticky = W)
-
-        # Button
-        self.button = Button(root, text = "Run Code", command = self.message)
-        self.button.grid(row = 0, column = 2)
-
-        # Results Label
-        results = Label(root, text = message)
-        results.grid(row = 1, column = 2)
-        
-
-    def message(self):
-        message = self.text.get()
-        
-"""
-intro = Label(root, text = "Enter Message:").grid(row = 0, column = 0, sticky = W)
-text = Text(root, width = 35, height = 5, command = message, wrap = WORD)
-text.grid(row = 0, column = 1, rowspan = 2, sticky = W)
-
-button = Button(root, text = "Run Code", command = number_of_words(word_list))
-button.grid(row = 0, column = 2)
-results = Label(root, text = number_of_words(word_list)) # Broken label and button
-results.grid(row = 1, column = 2)
-"""
-
-root = Tk()
-root.title("Textual Analysis")
-root.geometry("500x250+800+300")
-
-app = GUI(root)
-
 root.mainloop()
-
