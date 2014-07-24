@@ -112,13 +112,15 @@ word_list = split_up("\W+", message)
 # Split message into sentences
 sentence_list = split_up("[.!?]", message)
 
-#for 
+for sentence in sentence_list:
+    sent_words = split_up("\W+", sentence)
 
 
 # Tests
 print(word_list)
 print()
 print(sentence_list)
+print()
 print()
 
 
