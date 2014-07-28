@@ -37,6 +37,7 @@ find the paragraph length
   * use len function to find the character length
   * also find how many words in the paragraph
   * also find how many sentences in the paragraph
+  * count \n to find number of paragraphs
 
 word use
   * compare words to other words that have appeared in the sentence or paragraph.
@@ -67,21 +68,23 @@ might want to use classes and objects to define sentences, words, and paragraphs
 
 
 """
+
+"""
 # Imports
 from tkinter import *
 import re
 
 # Build GUI class
-class GUI(Frame):
-    """ GUI for Textual Analysis """
+class GUI(Frame:
+   
     def __init__(self, master):
-        """ Initialize the frame """
+        
         super(GUI, self).__init__(master)
         self.grid()
         self.widgets()
 
     def widgets(self):
-        """ Create labels, textbox, and buttons """
+        
         # Intro label
         self.intro = Label(self, text = "Enter Message:").grid(row = 0, column = 0, sticky = W)
         
@@ -109,7 +112,7 @@ class GUI(Frame):
 
 # can be used for word length and sentence length
 def average_length(lists):
-    """ Find the average word length of a sentence """
+    
 
     # Find the average word length of the sentence
     length_list = []
@@ -128,7 +131,7 @@ def average_length(lists):
 
 
 def length(lists):
-    """ Finds length of a list """
+    
     length = len(lists)
     return length
 
@@ -162,7 +165,7 @@ for sentence in sentence_list:
     words_in_sentence.append(sent_words)
 
 
-
+root.mainloop()
 
 
 # Tests
@@ -190,5 +193,164 @@ print()
 print("The average number of words in a sentence: ", end="")
 average_length(words_in_sentence)
 print()
+"""
+#########################################################################################
+
+# Imports
+from tkinter import *
+import re
+
+
+
+# Functions
+
+# can be used for word length and sentence length
+def average_length(lists):
+    """ Find the average word length of a sentence """
+
+    # Find the average word length of the sentence
+    length_list = []
+    for thing in lists:
+        length = len(thing)
+        length_list.append(length)
+
+    list_sum = 0
+    for i in length_list:
+        list_sum += i
+
+    # Be careful about the length of the floats
+    list_avg = list_sum / len(length_list)
+
+    return list_avg
+
+
+def length(lists):
+    """ Finds length of a list """
+    length = len(lists)
+    return length
+
+
+def split_up(special, string):
+    lists = re.split(special, string)
+    if "" in lists:
+        lists.remove("")
+    return lists
+
+def the_message():
+    message = text_box.get(0.0, END)
+    text_label["text"] += message
+    text_box.delete(0.0, END)
+
+    # might have to split sentence into pieces
+    word_list = split_up("\W+", message)
+
+    # Split message into sentences
+    sentence_list = split_up("[.!?]", message)
+
+    words_in_sentence = []
+    for sentence in sentence_list:
+        sent_words = split_up("\W+", sentence)
+        words_in_sentence.append(sent_words)
+    
+
+    sent["text"] += str(length(sentence_list))
+    words["text"] += str(length(word_list))
+    avg_word_length["text"] += "%.2f" % average_length(word_list)
+    avg_sent_length["text"] += "%.2f" % average_length(sentence_list)
+    avg_word_per_sent["text"] += "%.2f" % average_length(words_in_sentence)
+
+
+    #Tests
+    print(message)
+    print ()
+    print(word_list)
+    print()
+    print(sentence_list)
+    print()
+    print(words_in_sentence)
+    
+
+    # Print functions
+    print("\nYour message is", length(sentence_list), "sentences long.")
+    print("\nYour message is", length(word_list), "words long.")
+    print()
+    # Average characters in a word of the whole message
+    print("The average number of letters in a word: ", end="")
+    print(average_length(word_list))
+    print()
+    # Average characters in a sentence
+    print("The average number of characters in a sentence: ", end="")
+    print(average_length(sentence_list)) 
+    print()
+    # Average words in a sentence for the whole message
+    print("The average number of words in a sentence: ", end="")
+    print(average_length(words_in_sentence))
+    print()
+
+    return message
+
+
+# The Main loop
+root = Tk()
+root.title("Textual Analysis")
+root.geometry("500x250+800+300")
+
+# Intro label
+intro = Label(root, text = "Enter Text:").grid(row = 0, column = 0, sticky = W)
+        
+# Textbox
+text_box = Text(root, width = 25, height = 5, wrap = WORD)
+text_box.grid(row = 0, column = 1, sticky = W)
+
+# Results labels
+text_label = Label(root, text = "The Text: ")
+text_label.grid(row = 1, column = 0, columnspan = 5, sticky = W)
+
+sent = Label(root, text = "Number of sentences: ")
+sent.grid(row = 2, column = 0, columnspan = 2, sticky = W)
+
+words = Label(root, text = "Number of words: ")
+words.grid(row = 3, column = 0, sticky = W) 
+
+avg_word_length = Label(root, text = "Avg. word length: ")
+avg_word_length.grid(row = 4, column = 0, sticky = W)
+
+avg_sent_length = Label(root, text = "Avg. sentence length: ")
+avg_sent_length.grid(row = 5, column = 0, columnspan = 2, sticky = W)
+
+avg_word_per_sent = Label(root, text = "Avg. words per sentence: ")
+avg_word_per_sent.grid(row = 6, column = 0, columnspan = 2, sticky = W)
+
+# Button
+button = Button(root, text = "Run Code", command = the_message)
+button.grid(row = 0, column = 2)
+
+# Results textbox
+
+
+
+
 
 root.mainloop()
+
+"""
+What to work on
+
+remove any empty words or sentences
+
+work on identifying paragraphs
+
+rounding floating number issues
+
+identifying most common words
+
+identifying strange words
+
+restart button to do again
+
+clear button
+
+how to compare multiple things of text
+
+what to do if input text has a number with decimal point in it
+"""

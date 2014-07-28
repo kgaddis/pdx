@@ -111,3 +111,12 @@ while i not in ["0", "1"]:
         print("Bye")
     else:
         print("Please select a valid option")
+
+
+""" 
+
+Put in read from file option
+
+Also a set your team option
+
+"""
