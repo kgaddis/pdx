@@ -24,7 +24,7 @@ run the playing loop and prints who wins
 import tests from file
 """
 from random import choice
-
+from tkinter import *
 
 
 def menu():
@@ -119,4 +119,25 @@ Put in read from file option
 
 Also a set your team option
 
+Add GUI
+"""
+"""
+class CoinWar(Frame):
+    
+    def __init__(self, root):
+        super().__init__(root)
+        self.grid()
+        
+        # Create widgets
+
+
+# Seed the PRNG
+seed()
+
+# Start the app
+root = Tk()
+root.title("Coin War")
+
+app = CoinWar(root)
+root.mainloop()
 """
