@@ -43,7 +43,7 @@ def draw_city():
 
         # Write city name near circle
         # I want to city to be even more left
-        write(city[1], align = "left")
+        write("    " + city[1], align = "left")
 
 def draw_road():
     up()

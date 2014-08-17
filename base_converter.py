@@ -38,10 +38,16 @@ after the quiz can show results
     - maybe have a high scores list posted online if can **Extra
 
 In each mode have a back button or main menu button to get back tot he main menu
+
+for window setup i wnat to be able to find the display size and put my program in the middle of the screen
 """
 
 from tkinter import *
 from tkinter import ttk
+
+class App(Tk):
+    
+
 
 # Menu frame
 class Menu(Frame):
@@ -54,13 +60,24 @@ class Menu(Frame):
     def widgets(self):
         
         Label(self, text = "This is a sample").grid(row = 0, column = 0)
-        Button(self, text = "I do nothing").grid(row = 1, column = 0)
+        Button(self, text = "Practice", command = self.change).grid(row = 1, column = 0)
 
+
+    def change(self):
+        return Practice(root)
 # Converter Frame
 
 
 # Practice Quiz
+class Practice(Frame):
+    
+    def __init__(self, master):
+        super(Practice, self).__init__(master)
+        self.grid()
+        self.widgets()
 
+    def widgets(self):
+        Label(self, text = "This is a new frame").grid(row = 0, column = 0)
 
 # Converter game
 
@@ -70,10 +87,10 @@ class Menu(Frame):
 # main function
 def main():
     
-    root = Tk()
+    root = App()
     root.title("Base Number Converter")
     root.geometry("500x400+600+300")
-    menu = Menu(root)
+    screen = Menu(root)
     root.mainloop()
 
 # Run program
