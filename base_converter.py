@@ -118,29 +118,70 @@ class Menu(Frame):
 
         Button(self.game_btn_frame, text = "Game").grid()
 
+    def pretty_print(self, text, entry, output, answer):
+        a = self.answer["text"] = text + " (" + entry +\
+                     ") = " + answer + " (" + output + ")"
+        return a
 
-    def convert(self, text, entry, output):
-        # text mod 2
-        # mod number = that first digit
-        # text div 2
-        # Do it again recursively
-
+    def error_print(self):
+        a = self.answer["text"] = "Error: Invalid input for this conversion"
+    def convert_d_b(self, text):
+       
+        # Calculations
         num = int(text)
         converted_num = ""
         while num != 0:
             R = num % 2
             converted_num = str(R) + converted_num
 
-            D = num //2
+            D = num // 2
             num = D
-            
-        answer = self.answer["text"] = text + " (" + entry + ") = "\
-                 + converted_num + " (" + output + ")"
-
+        
+        answer = self.pretty_print(text, "d", "b", converted_num)
         return answer
         
 
+    def convert_d_h(self, text): 
         
+        # Calculations
+        num = int(text)
+        converted_num = ""
+        while num != 0:
+            R = num % 16
+            if R == 10:
+                R = "a"
+            elif R == 11:
+                R = "b"
+            elif R == 12:
+                R = "c"
+            elif R == 13:
+                R = "d"
+            elif R == 14:
+                R = "e"
+            elif R == 15:
+                R = "f"
+
+            converted_num = str(R) + converted_num
+
+            D = num // 16
+            num = D
+        
+        answer = self.pretty_print(text, "d", "h", converted_num)
+        return answer
+
+    def convert_b_d(self, text):
+        # Calculate
+        n = 0
+        text_list = list(text)
+        converted_num = 0
+        while text_list != []:
+            converted_num += (2 ** n) * int(text_list[-1])
+            del text_list[-1]
+            n += 1
+        
+        answer = self.pretty_print(text, "b", "d", str( converted_num))
+        return answer
+
     def disp_convert(self):
         
         entry = self.entry.get()
@@ -158,37 +199,40 @@ class Menu(Frame):
                 
         # If they are the same
         elif entry == output:
-            self.print_answer(text, entry, output)
-        
+            self.answer["text"] = text + " (" + entry + ") = "\
+                 + text + " (" + output + ")"
+
         # dec to bin using right to left method
         elif entry == "d" and output == "b":
             regex = re.compile("[0-9]+")
             result = regex.fullmatch(text)
             
             if result != None:
-                self.convert(text, entry, output)
+                self.convert_d_b(text)
             else:
-                self.answer["text"] = "Error"
+                self.error_print()
             
-
-
-
-
-
-
-
         # dec to hex    
         elif entry == "d" and output == "h":
+            regex = re.compile("[0-9]+")
+            result = regex.fullmatch(text)
             
-            self.answer["text"] = "decimal to hex"
-        
+            if result != None:
+                self.convert_d_h(text)
+            else:
+                self.error_print()
+         
         # bin to dec
         elif entry == "b" and output == "d":
             regex = re.compile("[01]+")
             result = regex.fullmatch(text)
-            
-            self.answer["text"] = "binary to decimal"
-        
+         
+            if result != None:
+                self.convert_b_d(text)
+            else:
+                self.error_print()
+         
+         
         # bin to hex
         elif entry == "b" and output == "h":
             self.answer["text"] = "binary to hex"
