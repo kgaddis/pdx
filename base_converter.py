@@ -44,7 +44,6 @@ for window setup i wnat to be able to find the display size and put my program i
 """
 
 from tkinter import *
-from tkinter import ttk
 import re
 
 # Menu frame
@@ -55,17 +54,16 @@ class Menu(Frame):
         self.grid()
         self.widgets()
         self["borderwidth"] = 7
+    
 
     def widgets(self):
         
-        self.titleframe = Frame(self, bd = 5)
-        self.titleframe.grid(row = 0, column = 2, columnspan = 4)
-        self.title1 = Label(self, text = "Welcome!", font = 16)
-        self.title1.grid(row = 0, column = 2, columnspan = 1)
-        self.title2 = Label(self, text = "Base Number Converter", font = 16)
+        self.title1 = Label(self, text = "Welcome!", font = ("Helvetica", 28))
+        self.title1.grid(row = 0, column = 1, columnspan = 3)
+        self.title2 = Label(self, text = "Base Number Converter", font = ("Helvetica", 24), pady = 8)
         self.title2.grid(row = 1, column = 1, columnspan = 3)
-        Label(self, text = "From").grid(row = 2, column = 1)
-        Label(self, text = "To").grid(row = 2, column = 3)
+        Label(self, text = "From", font = ("Helvetica", 10, "underline")).grid(row = 2, column = 1)
+        Label(self, text = "To", font = ("Helvetica", 10, "underline")).grid(row = 2, column = 3)
 
         # Text box with from options
         self.text_in = Entry(self, width = 12)
@@ -98,7 +96,7 @@ class Menu(Frame):
         self.convert_btn = Button(self.conv_btn_frame, text = "Convert", command = self.disp_convert)
         self.convert_btn.grid()
 
-        self.answer_frame1 = Frame(self, bd = 2, height = 50, width = 300, relief = "groove")
+        self.answer_frame1 = Frame(self, bd = 2, height = 50, width = 350, relief = "groove")
         self.answer_frame1.grid(row = 8, column = 1, columnspan = 3)
         self.answer_frame1.grid_propagate(0)
         self.answer_frame2 = Frame(self)
@@ -123,8 +121,16 @@ class Menu(Frame):
                      ") = " + answer + " (" + output + ")"
         return a
 
+    def same(self, text, entry, output):
+        a = self.answer["text"] = text + " (" + entry + ") = "\
+                 + text + " (" + output + ")"
+        return a
+        
     def error_print(self):
         a = self.answer["text"] = "Error: Invalid input for this conversion"
+        
+        return a
+        
     def convert_d_b(self, text):
        
         # Calculations
@@ -137,8 +143,7 @@ class Menu(Frame):
             D = num // 2
             num = D
         
-        answer = self.pretty_print(text, "d", "b", converted_num)
-        return answer
+        return converted_num
         
 
     def convert_d_h(self, text): 
@@ -166,11 +171,11 @@ class Menu(Frame):
             D = num // 16
             num = D
         
-        answer = self.pretty_print(text, "d", "h", converted_num)
-        return answer
-
+        return converted_num
+        
     def convert_b_d(self, text):
-        # Calculate
+
+        # Calculations
         n = 0
         text_list = list(text)
         converted_num = 0
@@ -179,8 +184,28 @@ class Menu(Frame):
             del text_list[-1]
             n += 1
         
-        answer = self.pretty_print(text, "b", "d", str( converted_num))
-        return answer
+        return str(converted_num)
+        
+    def convert_h_d(self, text):
+        
+        # Calculations
+        n = 0
+        text_list = list(text)
+        text_list = [i.replace("a", "10") for i in text_list]
+        text_list = [i.replace("b", "11") for i in text_list]
+        text_list = [i.replace("c", "12") for i in text_list]
+        text_list = [i.replace("d", "13") for i in text_list]
+        text_list = [i.replace("e", "14") for i in text_list]
+        text_list = [i.replace('f', "15") for i in text_list]
+        
+        converted_num = 0
+        while text_list != []:
+            converted_num += (16 ** n) * int(text_list[-1])
+            del text_list[-1]
+            n += 1
+        
+        return str(converted_num)
+        
 
     def disp_convert(self):
         
@@ -197,65 +222,76 @@ class Menu(Frame):
         elif entry == "None" or output == "None":
             self.answer["text"] = "Please select conversion types"
                 
-        # If they are the same
-        elif entry == output:
-            self.answer["text"] = text + " (" + entry + ") = "\
-                 + text + " (" + output + ")"
-
-        # dec to bin using right to left method
-        elif entry == "d" and output == "b":
+       
+        # decimal input
+        elif entry == "d":
             regex = re.compile("[0-9]+")
             result = regex.fullmatch(text)
             
             if result != None:
-                self.convert_d_b(text)
-            else:
-                self.error_print()
-            
-        # dec to hex    
-        elif entry == "d" and output == "h":
-            regex = re.compile("[0-9]+")
-            result = regex.fullmatch(text)
-            
-            if result != None:
-                self.convert_d_h(text)
-            else:
-                self.error_print()
-         
-        # bin to dec
-        elif entry == "b" and output == "d":
-            regex = re.compile("[01]+")
-            result = regex.fullmatch(text)
-         
-            if result != None:
-                self.convert_b_d(text)
-            else:
-                self.error_print()
-         
-         
-        # bin to hex
-        elif entry == "b" and output == "h":
-            self.answer["text"] = "binary to hex"
-        
-        # hex to dec
-        elif entry == "h" and output == "d":
-            regex = re.compile("[0-9a-fA-F]+")
-            result = regex.fullmatch(text)
-            
-            self.answer["text"] = "hex to decimal"
-        
-        # hex to bin
-        elif entry == "h" and output == "b":
-            self.answer["text"] = "hex to binary"
-        
-
-        # Delete entry box
-        #self.text_in.delete(0, END) 
-
+                # to binary
+                if output == "b":
+                    answer = self.convert_d_b(text)
+                    self.pretty_print(text, entry, output, answer)
+                # to hexadeciaml
+                elif output == "h":
+                    answer = self.convert_d_h(text)
+                    self.pretty_print(text, entry, output, answer)
+                # to deccimal
+                elif output == "d":
+                    self.same(text, entry, output)
                 
+            else:
+                self.error_print()
+            
+            
+        # binary input
+        elif entry == "b":
+            regex = re.compile("[01]+")
+            result = regex.fullmatch(text)    
 
-    def change(self):
-        return Practice(root)
+            if result != None:
+                # to decimal
+                if output == "d":
+                    answer = self.convert_b_d(text)
+                    self.pretty_print(text, entry, output, answer)
+                # to hexadecimal    
+                elif output == "h":
+                    answer = self.convert_d_h(self.convert_b_d(text))
+                    self.pretty_print(text, entry, output, answer)
+                # to binary
+                elif output == "b":
+                    self.same(text, entry, output)
+                
+            else:
+                self.error_print()
+         
+
+        # hexadecimal input
+        elif entry == "h":
+            regex = re.compile("[0-9a-f]+")
+            result = regex.fullmatch(text)
+            
+            if result != None:
+                # to decimal
+                if output == "d":
+                    answer = self.convert_h_d(text)
+                    self.pretty_print(text, entry, output, answer)
+                # to binary    
+                elif output == "b":
+                    answer = self.convert_d_b(self.convert_h_d(text))
+                    self.pretty_print(text, entry, output, answer)
+                # to hexadecimal
+                elif output == "h":
+                    self.same(text, entry, output)
+                
+            else:
+                self.error_print()
+         
+        
+    #def change(self):
+        #return Practice(root)
+
 # Converter Frame
 
 
@@ -280,7 +316,17 @@ def main():
     
     root = Tk()
     root.title("Base Number Converter")
-    root.geometry("560x350+600+300")
+    
+    # Get screenheight and screenwidth of monitor being used to place app in center
+    screenwidth = root.winfo_screenwidth()
+    screenheight = root.winfo_screenheight()
+    
+    # Calculate offset
+    sw = screenwidth // 2 - 585 // 2
+    sh = screenheight // 2 - 410 // 2
+    
+    root.geometry("585x410+" + str(sw) + "+" + str(sh))
+    
     screen = Menu(root)
     root.mainloop()
 
