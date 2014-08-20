@@ -47,10 +47,10 @@ from tkinter import *
 import re
 
 # Menu frame
-class Menu(Frame):
+class Converter(Frame):
     
     def __init__(self, master):
-        super(Menu, self).__init__(master)
+        super(Converter, self).__init__(master)
         self.grid()
         self.widgets()
         self["borderwidth"] = 7
@@ -109,12 +109,12 @@ class Menu(Frame):
         self.practice_btn_frame = Frame(self, bd = 20)
         self.practice_btn_frame.grid(row = 9, column = 0, sticky = E)
 
-        Button(self.practice_btn_frame, text = "Practice").grid()
+        Button(self.practice_btn_frame, text = "Practice", command = self.go_practice).grid()
         
         self.game_btn_frame = Frame(self, bd = 20)
         self.game_btn_frame.grid(row = 9, column = 4, sticky = E)
 
-        Button(self.game_btn_frame, text = "Game").grid()
+        Button(self.game_btn_frame, text = "Game", command = self.go_game).grid()
 
     def pretty_print(self, text, entry, output, answer):
         a = self.answer["text"] = text + " (" + entry +\
@@ -288,47 +288,195 @@ class Menu(Frame):
             else:
                 self.error_print()
          
-        
-    #def change(self):
-        #return Practice(root)
+    def go_practice(self):
+        self.destroy()
+        return Practice_Menu(root)
 
-# Converter Frame
+    def go_game(self):
+        self.destroy()
+        return Game_Menu(root)
+
 
 
 # Practice Quiz
-class Practice(Frame):
+class Practice_Menu(Frame):
     
     def __init__(self, master):
+        super(Practice_Menu, self).__init__(master)
+        self.grid()
+        self.widgets()
+        self["borderwidth"] = 7
+
+    def widgets(self):
+        # Title and instructions
+        Label(self, text = "Practice", font = ("Helvetica", 28)).grid(row = 0, column = 2)
+        self.instruct = Label(self, height = 6)
+        self.instruct.grid(row = 1, column = 1, columnspan = 3, sticky =  W)
+        self.instruct["text"] = "You have heard the espression 'practice makes perfect'."
+        self.instruct["text"] += "\nWell here is where you can practice your base conversion "
+        self.instruct["text"] += "\nskills. There are three difficulties you can select from "
+        self.instruct["text"] += "\nbelow. You will be given ten problems with no time limit."
+        self.instruct["text"] += "\nEnter the correct answer in the associated textbox."
+        self.instruct["text"] += "\nClick submit when finished."
+
+
+        # Difficulty options
+        self.diff = StringVar()
+        self.diff.set(None)
+
+        self.diff_frame = Frame(self, bd = 20, relief = "groove")
+        self.diff_frame.grid(row = 2, column = 2)
+        
+        self.easy = Radiobutton(self.diff_frame, variable = self.diff, value = "e")
+        self.easy["text"] = "Easy - decimal and binary"
+        self.easy.grid(row = 0, column = 2, sticky = W)
+        self.medium = Radiobutton(self.diff_frame, variable = self.diff, value = "m")
+        self.medium["text"] = "Medium - decimal, binary and hexadecimal"
+        self.medium.grid(row = 1, column = 2, sticky = W)
+        self.hard = Radiobutton(self.diff_frame, variable = self.diff, value = "h")
+        self.hard["text"] = "Hard - larger decimal, binary and hexadecimal"
+        self.hard.grid(row = 2, column = 2, sticky = W)
+        
+        # Low Buttons
+        self.menu_btn_frame = Frame(self, bd = 20, relief = "groove")
+        self.menu_btn_frame.grid(row = 5, column = 0, sticky = E)
+
+        Button(self.menu_btn_frame, text = "Menu", command = self.menu).grid()
+
+        self.begin_btn_frame = Frame(self, bd = 20, relief = "groove")
+        self.begin_btn_frame.grid(row = 5, column = 4, sticky = E)
+
+        Button(self.begin_btn_frame, text = "Begin", command = self.begin).grid(row = 5, column = 4)
+        
+        self.error_label = Label(self, font = 12)
+        self.error_label.grid(row = 5, column = 2)
+        
+    def menu(self):
+        self.destroy()
+        return Converter(root)
+
+    def begin(self):
+        if self.diff.get() != "None":
+            self.destroy()
+            return Practice(root, self.diff.get())
+        else:
+            self.error_label["text"] = "Please select a difficulty."
+            
+class Practice(Converter):
+    
+    def __init__(self, master, diff):
         super(Practice, self).__init__(master)
         self.grid()
         self.widgets()
+        self.diff = diff
+        print(self.diff)
+        
+    def widgets(self):
+        Label(self, text = "This is the practice area").grid(row = 0)
+        Button(self, text = "Menu", command = self.menu).grid(row = 5, column = 0)
+
+    def menu(self):
+        self.destroy()
+        return Converter(root)
+
+
+# Converter game
+class Game_Menu(Frame):
+    def __init__(self, master):
+        super(Game_Menu, self).__init__(master)
+        self.grid()
+        self.widgets()
+        self["borderwidth"] = 7
 
     def widgets(self):
-        Label(self, text = "Practice").grid(row = 0, column = 3)
-        
-# Converter game
+        # Title and instructions
+        Label(self, text = "Base Converter\nGame", font = ("Helvetica", 28)).grid(row = 0, column = 2)
+        self.instruct = Label(self, text = "Place holder", height = 6)
+        self.instruct.grid(row = 1, column = 1, columnspan = 4, sticky = E + W)
+        self.instruct["text"] = "You have heard the espression 'practice makes perfect'."
+        self.instruct["text"] += "\nWell here is where you can practice your base conversion "
+        self.instruct["text"] += "\nskills. There are three difficulties you can select from "
+        self.instruct["text"] += "\nbelow. You will be given ten problems with no time limit."
+        self.instruct["text"] += "\nEnter the correct answer in the associated textbox."
+        self.instruct["text"] += "\nClick submit when finished."
 
+
+        # Difficulty options
+        self.diff = StringVar()
+        self.diff.set(None)
+
+        self.diff_frame = Frame(self, bd = 20)
+        self.diff_frame.grid(row = 2, column = 2)
+        
+        self.easy = Radiobutton(self.diff_frame, variable = self.diff, value = "e")
+        self.easy["text"] = "Easy - decimal and binary"
+        self.easy.grid(row = 0, column = 2, sticky = W)
+        self.medium = Radiobutton(self.diff_frame, variable = self.diff, value = "m")
+        self.medium["text"] = "Medium - decimal, binary and hexadecimal"
+        self.medium.grid(row = 1, column = 2, sticky = W)
+        self.hard = Radiobutton(self.diff_frame, variable = self.diff, value = "h")
+        self.hard["text"] = "Hard - larger decimal, binary and hexadecimal"
+        self.hard.grid(row = 2, column = 2, sticky = W)
+        
+        # Low Buttons
+        self.menu_btn_frame = Frame(self, bd = 20)
+        self.menu_btn_frame.grid(row = 5, column = 0, sticky = E)
+
+        Button(self.menu_btn_frame, text = "Menu", command = self.menu).grid()
+
+        self.play_btn_frame = Frame(self, bd = 20)
+        self.play_btn_frame.grid(row = 5, column = 4, sticky = E)
+
+        Button(self, text = "Play", command = self.play).grid(row = 5, column = 4)
+        
+        self.error_label = Label(self, font = 12)
+        self.error_label.grid(row = 5, column = 2)
+        
+    def menu(self):
+        self.destroy()
+        return Converter(root)
+
+    def play(self):
+        if self.diff.get() != "None":
+            self.destroy()
+            return Game(root, self.diff.get())
+        else:
+            self.error_label["text"] = "Please select a difficulty."
+    
+class Game(Converter):
+    
+    def __init__(self, master, diff):
+        super(Game, self).__init__(master)
+        self.grid()
+        self.widgets()
+        self.diff = diff
+        print(self.diff)
+        
+    def widgets(self):
+        Label(self, text = "This is the game area").grid(row = 0)
+        Button(self, text = "Menu", command = self.menu).grid(row = 5, column = 0)
+
+    def menu(self):
+        self.destroy()
+        return Converter(root)
 
 
 
 # main function
-def main():
-    
-    root = Tk()
-    root.title("Base Number Converter")
-    
-    # Get screenheight and screenwidth of monitor being used to place app in center
-    screenwidth = root.winfo_screenwidth()
-    screenheight = root.winfo_screenheight()
-    
-    # Calculate offset
-    sw = screenwidth // 2 - 585 // 2
-    sh = screenheight // 2 - 410 // 2
-    
-    root.geometry("585x410+" + str(sw) + "+" + str(sh))
-    
-    screen = Menu(root)
-    root.mainloop()
 
-# Run program
-main()
+root = Tk()
+root.title("Base Number Converter")
+
+# Get screenheight and screenwidth of monitor being used to place app in center
+screenwidth = root.winfo_screenwidth()
+screenheight = root.winfo_screenheight()
+
+# Calculate offset
+sw = screenwidth // 2 - 585 // 2
+sh = screenheight // 2 - 410 // 2
+
+root.geometry("585x410+" + str(sw) + "+" + str(sh))
+
+screen = Converter(root)
+root.mainloop()
+
