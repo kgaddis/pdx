@@ -45,6 +45,7 @@ for window setup i wnat to be able to find the display size and put my program i
 
 from tkinter import *
 import re
+import random
 
 # Menu frame
 class Converter(Frame):
@@ -310,14 +311,18 @@ class Practice_Menu(Frame):
     def widgets(self):
         # Title and instructions
         Label(self, text = "Practice", font = ("Helvetica", 28)).grid(row = 0, column = 2)
-        self.instruct = Label(self, height = 6)
-        self.instruct.grid(row = 1, column = 1, columnspan = 3, sticky =  W)
-        self.instruct["text"] = "You have heard the espression 'practice makes perfect'."
-        self.instruct["text"] += "\nWell here is where you can practice your base conversion "
-        self.instruct["text"] += "\nskills. There are three difficulties you can select from "
-        self.instruct["text"] += "\nbelow. You will be given ten problems with no time limit."
-        self.instruct["text"] += "\nEnter the correct answer in the associated textbox."
-        self.instruct["text"] += "\nClick submit when finished."
+
+        self.inst_list = []
+        for i in range(6):
+            self.inst_list.append(Label(self))
+            self.inst_list[i].grid(row = i + 1, column = 1, columnspan = 3, sticky =  W)
+        
+        self.inst_list[0]["text"] = "You have heard the espression 'practice makes perfect'."
+        self.inst_list[1]["text"] += "Here is where you can practice your base conversion skills."
+        self.inst_list[2]["text"] += "There are three difficulties you can select from."
+        self.inst_list[3]["text"] += "You will be given ten problems with no time limit."
+        self.inst_list[4]["text"] += "Enter the correct answer in the associated textbox."
+        self.inst_list[5]["text"] += "Click submit when finished."
 
 
         # Difficulty options
@@ -325,7 +330,7 @@ class Practice_Menu(Frame):
         self.diff.set(None)
 
         self.diff_frame = Frame(self, bd = 20, relief = "groove")
-        self.diff_frame.grid(row = 2, column = 2)
+        self.diff_frame.grid(row = 7, column = 2)
         
         self.easy = Radiobutton(self.diff_frame, variable = self.diff, value = "e")
         self.easy["text"] = "Easy - decimal and binary"
@@ -338,20 +343,20 @@ class Practice_Menu(Frame):
         self.hard.grid(row = 2, column = 2, sticky = W)
         
         # Low Buttons
-        self.menu_btn_frame = Frame(self, bd = 20, relief = "groove")
-        self.menu_btn_frame.grid(row = 5, column = 0, sticky = E)
+        self.back_btn_frame = Frame(self, bd = 20, relief = "groove")
+        self.back_btn_frame.grid(row = 8, column = 0, sticky = E)
 
-        Button(self.menu_btn_frame, text = "Menu", command = self.menu).grid()
+        Button(self.back_btn_frame, text = "Back", command = self.back).grid()
 
         self.begin_btn_frame = Frame(self, bd = 20, relief = "groove")
-        self.begin_btn_frame.grid(row = 5, column = 4, sticky = E)
+        self.begin_btn_frame.grid(row = 8, column = 4, sticky = E)
 
         Button(self.begin_btn_frame, text = "Begin", command = self.begin).grid(row = 5, column = 4)
         
         self.error_label = Label(self, font = 12)
-        self.error_label.grid(row = 5, column = 2)
+        self.error_label.grid(row = 8, column = 2)
         
-    def menu(self):
+    def back(self):
         self.destroy()
         return Converter(root)
 
@@ -369,16 +374,142 @@ class Practice(Converter):
         self.grid()
         self.widgets()
         self.diff = diff
-        print(self.diff)
+        self.quiz()
+        #print(self.diff)
         
     def widgets(self):
-        Label(self, text = "This is the practice area").grid(row = 0)
-        Button(self, text = "Menu", command = self.menu).grid(row = 5, column = 0)
+        self.title = Label(self, text = "Convert", font = ("Helvetica", 28))
+        self.title.grid(row = 0, column = 1, columnspan = 3)
+        self.subtitle = Label(self, text = "d - decimal : b - binary : h - hexadecimal")
+        self.subtitle.grid(row = 1, column = 1, columnspan = 3)
+
+        # List of questions
+        self.question_list = []
+        self.entry_list = []
+        for i in range(10):
+            self.question_list.append(Label(self, text = i, pady = 4))
+            self.question_list[i].grid(row = i + 2, column = 0, columnspan = 2, sticky = W)
+            self.entry_list.append(Entry(self, width = 12))
+            self.entry_list[i].grid(row = i + 2, column = 2, sticky = E)
+        # Buttons
+        self.quit_btn_frame = Frame(self, bd = 20, padx = 30, relief = "groove")
+        self.quit_btn_frame.grid(row = 12, column = 0, sticky = W)
+
+        Button(self.quit_btn_frame, text = "Quit", command = self.menu).grid()
+
+        self.submit_btn_frame = Frame(self, bd = 20, padx = 30, relief = "groove")
+        self.submit_btn_frame.grid(row = 12, column = 4, sticky = W)
+
+        Button(self.submit_btn_frame, text = "Submit").grid()
+
+        self.cheat_btn_frame = Frame(self, padx = 0, relief = "groove")
+        self.cheat_btn_frame.grid(row = 2, column = 4, sticky = W)
+
+        Button(self.cheat_btn_frame, text = "Cheat Sheet", command = self.cheat_sheet).grid()
+
+    # Making a question a function now but might make it a class later
+    def question(self, difficulty):
+        # Makes a single question
+        if difficulty == "e":
+            c = random.choice(["d", "b"])
+            first_digit = str(random.randrange(4))
+            second_digit = str(random.randrange(10))
+
+            if first_digit == "0":
+                num = second_digit
+            else:
+                num = first_digit + second_digit
+            
+            if c == "d":
+                return num + " (d)  to  (b)"
+            elif c == "b":
+                return self.convert_d_b(num) + " (b)  to  (d)" 
+                
+        elif self.diff == "m":
+            converts = ["d", "b", "h"]
+            c = random.choice(converts)
+            converts.remove(c)
+
+            first_digit = str(random.randrange(7))
+            second_digit = str(random.randrange(10))
+
+            if first_digit == "0":
+                num = second_digit
+            else:
+                num = first_digit + second_digit
+            
+            if c == "d":
+                out = random.choice(converts)
+                return num + " (d)  to  (" + out +")"
+            elif c == "b":
+                out = random.choice(converts)
+                return self.convert_d_b(num) + " (b)  to  (" + out +")" 
+            elif c == "h":
+                out = random.choice(converts)
+                return self.convert_d_h(num) + " (h)  to  (" + out +")"
+
+        elif self.diff == "h":
+            converts = ["d", "b", "h"]
+            c = random.choice(converts)
+            converts.remove(c)
+
+            first_digit = str(random.randrange(6))
+            second_digit = str(random.randrange(10))
+            third_digit = str(random.randrange(10))
+
+            if first_digit == "0":
+                num = second_digit + third_digit
+            elif first_digit == "0" and second_digit == "0":
+                num == third_digit
+            else:
+                num = first_digit + second_digit + third_digit
+            
+            if c == "d":
+                out = random.choice(converts)
+                return num + " (d)  to  (" + out +")"
+            elif c == "b":
+                out = random.choice(converts)
+                return self.convert_d_b(num) + " (b)  to  (" + out +")" 
+            elif c == "h":
+                out = random.choice(converts)
+                return self.convert_d_h(num) + " (h)  to  (" + out +")"
+
+        
+
+    def quiz(self):
+        # Puts a bunch of questions together
+        for i in range(10):
+            self.question_list[i]["text"] = str(i + 1) + ".\t" + self.question(self.diff)
+
+        return 
 
     def menu(self):
         self.destroy()
         return Converter(root)
 
+    def cheat_sheet(self):
+        cheat = Tk()
+        cheat.title("Cheat Sheet")
+
+        # Calculate offset
+        sw = cheat.winfo_screenwidth() // 2 + 585 // 2
+        sh = cheat.winfo_screenheight() // 2 - 410 // 2
+
+        cheat.geometry("300x410+" + str(sw) + "+" + str(sh))
+
+        Cheat_Sheet(cheat)
+class Cheat_Sheet(Frame):
+    
+    def __init__(self, master):
+        super(Cheat_Sheet, self).__init__(master)
+        self.grid()
+        self.widgets()
+        self["borderwidth"] = 7
+
+    def widgets(self):
+        Label(self, text = "Decimal").grid(row = 0, column = 1)
+
+        
 
 # Converter game
 class Game_Menu(Frame):
@@ -391,14 +522,18 @@ class Game_Menu(Frame):
     def widgets(self):
         # Title and instructions
         Label(self, text = "Base Converter\nGame", font = ("Helvetica", 28)).grid(row = 0, column = 2)
-        self.instruct = Label(self, text = "Place holder", height = 6)
-        self.instruct.grid(row = 1, column = 1, columnspan = 4, sticky = E + W)
-        self.instruct["text"] = "You have heard the espression 'practice makes perfect'."
-        self.instruct["text"] += "\nWell here is where you can practice your base conversion "
-        self.instruct["text"] += "\nskills. There are three difficulties you can select from "
-        self.instruct["text"] += "\nbelow. You will be given ten problems with no time limit."
-        self.instruct["text"] += "\nEnter the correct answer in the associated textbox."
-        self.instruct["text"] += "\nClick submit when finished."
+
+        self.inst_list = []
+        for i in range(6):
+            self.inst_list.append(Label(self))
+            self.inst_list[i].grid(row = i + 1, column = 1, columnspan = 3, sticky =  W)
+        
+        self.inst_list[0]["text"] = "You have heard the espression 'practice makes perfect'."
+        self.inst_list[1]["text"] += "Here is where you can practice your base conversion skills."
+        self.inst_list[2]["text"] += "There are three difficulties you can select from."
+        self.inst_list[3]["text"] += "You will be given ten problems with no time limit."
+        self.inst_list[4]["text"] += "Enter the correct answer in the associated textbox."
+        self.inst_list[5]["text"] += "Click submit when finished."
 
 
         # Difficulty options
