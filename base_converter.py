@@ -614,7 +614,7 @@ class Practice_Score(Frame):
         self.menu_btn_frame = Frame(self, pady = 20, padx = 20)
         self.menu_btn_frame.grid(row = 13, column = 0)
 
-        Button(self.menu_btn_frame, text = "Menu", command = self.menu).grid()
+        Button(self.menu_btn_frame, text = "Quit", command = self.menu).grid()
 
         self.trya_btn_frame = Frame(self, pady = 20, padx = 20)
         self.trya_btn_frame.grid(row = 13, column = 3, sticky = E)
@@ -715,18 +715,133 @@ class Game_Menu(Frame):
         else:
             self.error_label["text"] = "Please select a difficulty."
     
+class Timer(Frame):
+    
+    def __init__(self, master, remaining):
+        super(Timer, self).__init__(master)
+        self.remaining = remaining
+
+        self.clock = Label(self, font = t_font)
+        self.message = Label(self, font = ("Helvetica", 18))
+        self.clock.grid(row = 0, sticky = W)
+        self.message.grid(row = 1, sticky = W)
+
+    def countdown(self):
+        self.t_min = self.remaining // 60
+        self.t_sec = self.remaining % 60
+        if self.remaining > 0:
+            
+            if self.t_sec < 10:
+                self.clock["text"] = str(self.t_min) + ":0" + str(self.t_sec) 
+            else:
+                self.clock["text"] = str(self.t_min) + ":" + str(self.t_sec) 
+
+            self.remaining -= 1
+            self.after(1000, self.countdown)
+        else:
+            self.clock["text"] = "0:00" 
+            self.message["text"] = "Time is up!"
+            
+
 class Game(Converter):
     
     def __init__(self, master, diff):
         super(Game, self).__init__(master)
+        self.diff = diff
         self.grid()
         self.widgets()
-        self.diff = diff
-        print(self.diff)
         
+
     def widgets(self):
-        Label(self, text = "This is the game area").grid(row = 0)
-        Button(self, text = "Menu", command = self.menu).grid(row = 5, column = 0)
+        self.title = Label(self, text = "Convert", font = t_font)
+        self.title.grid(row = 0, column = 1, columnspan = 3)
+        self.subtitle = Label(self, text = "d - decimal : b - binary : h - hexadecimal")
+        self.subtitle.grid(row = 1, column = 1, columnspan = 2, pady = 20)
+        
+        Label(self, text = "                   ", padx = 40).grid(row = 3, column = 0)
+
+        self.timer = Timer(self, 5)
+        self.timer.grid(row = 3, column = 3, rowspan = 3, columnspan = 2, sticky = W)
+       
+        self.start_frame = Frame(self, padx = 20, pady = 20)
+        self.start_frame.grid(row = 4, column = 0)
+        self.start_btn = Button(self.start_frame, text = "Start", command = self.start)
+        self.start_btn.grid()
+        
+        self.question = Label(self)
+        self.question.grid(row = 4, column = 0, columnspan = 3, sticky = W)
+        
+
+        # Bottom Buttons
+        self.skip_btn = Button(self, text = "Skip", command = self.skip, state = "disabled")
+        self.skip_btn.grid(row = 6, column = 1, columnspan = 3)
+        self.next_btn = Button(self, text = "Next", command = self.next_q, state = "disabled")
+        self.next_btn.grid(row = 6, column = 2, columnspan = 3, sticky = W)
+
+        self.error_label = Label(self)
+        self.error_label.grid(row = 7, column = 1, columnspan = 4)
+        
+        Button(self, text = "Quit", command = self.menu).grid(row = 8, column = 0)
+        self.see_score_btn = Button(self, text = "See Score", state = "disabled")
+        self.see_score_btn.grid(row = 8, column = 4)
+        
+        # Where do i put this??
+        if self.timer.remaining == 0:
+            self.skip_btn["state"] = "disabled"
+            self.next_btn["state"] = "disabled"
+            self.see_score_btn["state"] = "normal"
+        
+        
+
+    def load_question(self):
+        while True:
+            obj = Question(root, self.diff)
+            q = obj.question
+            if q in self.q_list:
+                continue
+            else:
+                self.question["text"] = str(self.i) + ".\t" +  q
+                self.entry_frame = Frame(self, padx = 20)
+                self.entry_frame.grid(row = 4, column = 1, sticky = E)
+                self.entry = Entry(self.entry_frame, width = 12)
+                self.entry.grid()
+                self.q_list.append(q)
+                self.question_list.append(self.question["text"])
+                self.answer_list.append(obj.answer)
+                self.i += 1
+                break
+    
+    def start(self):
+        self.start_btn.destroy()
+        self.skip_btn["state"] = "normal"
+        self.next_btn["state"] = "normal"
+        self.answer_list = []
+        self.question_list = []
+        self.entry_list = []
+        self.q_list = []
+        self.i = 1
+        self.timer.countdown()
+        self.load_question()
+        
+    def skip(self):
+        self.entry_list.append(None)
+        self.load_question()
+        self.error_label["text"] = ""
+           
+        print(self.entry_list)
+        print(self.question_list)
+        print(self.answer_list)
+
+    def next_q(self):
+        if self.entry.get() == "":
+            self.error_label["text"] = "Please enter answer or skip question"
+           
+        else:
+            self.entry_list.append(self.entry.get())
+            self.load_question()
+            print(self.entry_list)
+            print(self.question_list)
+            print(self.answer_list)
 
     def menu(self):
         self.destroy()
