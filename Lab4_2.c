@@ -53,7 +53,7 @@ int main() {
     struct vertex* last = malloc(sizeof(struct vertex));
     struct vertex* ii = insert(i);
     first->value = ii->value;
-    first->next = NULL;
+    first->next = last;
     last->value = ii->value;
     last->next = NULL;
         
@@ -69,8 +69,9 @@ int main() {
 	  last = last->next;
 	}
       }
+      
       //Remove and free first queue vertex or if last one end while loop
-      if (first->next == NULL) {
+      if (first == last) {
 	first = NULL;
       }
       else {
@@ -93,7 +94,7 @@ int main() {
   printf("\n");
   for (int i = 0; i < size; i++) {
     for (int j = 0; j < size; j++) {
-      printf("%d  ", graph[i][j]);
+      printf("%3d", graph[i][j]);
     }
     printf("\n");
   }
