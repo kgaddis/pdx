@@ -1,0 +1,115 @@
+5.15
+  Figure 5.12 on p. 501
+A. pg 503
+B. For data type float, what lower bound on the CPE is determined by the
+critical path?
+ 
+For float data type, lower bound CPE is
+
+C. Assuming similar instruction sequences for the integer code as well, what
+lower bound on the CPE is determined by the critical path for integer data?
+
+D. Explain how the two floating-point versions can have CPEs of 3.00, even
+though the multiplication operation requires either 4 or 5 clock cycles.
+
+   The CPE can be closer to the lower bound which ie below 4 and 5 and therefore can have CPE's or 3.00.
+
+
+
+
+5.16
+  Loop unrolling p. 509
+void inner4(vec_ptr u, vec_ptr v, data_t *dest)
+{
+    long int i;
+    int length = vec_length(u);
+    int limit = length - 1;
+    data_t *udata = get_vec_start(u);
+    data_t *vdata = get_vec_start(v);
+    data_t sum = (data_t) 0;
+
+    for (i = 0; i < limit; i+=4) {
+        sum = sum + udata[i] * vdata[i];
+	sum = sum + udata[i + 1] * vdata[i + 1];
+	sum = sum + udata[i + 2] * vdata[i + 2];
+	sum = sum + udata[i + 3] * vdata[i + 3];
+    }
+
+    for (; i < length; i++) {
+    	sum = sum + udata[i] * vdata[i];
+    }
+
+    *dest = sum;
+}
+
+A. Explain why any version of any inner product procedure cannot achieve a
+CPE less than 2.00.
+    This is because eventhough it uses a four-way loop unrolling, it reaches its latenncy and throughput bounds. Then we reach the point where the performance it limited at 2.00 because of the difference betweent he multiplication and addition latency.
+ 
+B. Explain why the performance for floating-point data did not improve with
+loop unrolling.
+
+Answer on p. 511
+
+
+5.17
+    p. 515
+void inner4(vec_ptr u, vec_ptr v, data_t *dest)
+{
+    long int i;
+    int length = vec_length(u);
+    int limit = length - 1;
+    data_t *udata = get_vec_start(u);
+    data_t *vdata = get_vec_start(v);
+    data_t sum0 = (data_t) 0;
+    data_t sum1 = (data_t) 0;
+    data_t sum2 = (data_t) 0;
+    data_t sum3 = (data_t) 0;
+
+    
+    for (i = 0; i < limit; i+=4) {
+        sum0 = sum0 + udata[i] * vdata[i];
+	sum1 = sum1 + udata[i + 1] * vdata[i + 1];
+	sum2 = sum2 + udata[i + 2] * vdata[i + 2];
+	sum3 = sum3 + udata[i + 3] * vdata[i + 3];
+    }
+
+    for (; i < length; i++) {
+    	sum0 = sum0 + udata[i] * vdata[i];
+    }
+
+    *dest = sum1 + sum2 + sum3 + sum4;
+}
+
+
+A. What factor limits the performance to a CPE of 2.00?
+B. Explain why the version with integer data on IA32 achieves a CPE of 2.75,
+worse than the CPE of 2.25 achieved with just four-way loop unrolling.
+ 
+p.517 and p 518
+
+
+
+
+5.18
+
+void inner4(vec_ptr u, vec_ptr v, data_t *dest)
+{
+    long int i;
+    int length = vec_length(u);
+    int limit = length - 1;
+    data_t *udata = get_vec_start(u);
+    data_t *vdata = get_vec_start(v);
+    data_t sum = (data_t) 0;
+
+    for (i = 0; i < limit; i+=4) {
+        sum = sum + (udata[i] * vdata[i] + udata[i + 1] * vdata[i + 1] + udata[i + 2] * vdata[i + 2] + udata[i + 3] * vdata[i + 3]);
+
+    }
+
+    for (; i < length; i++) {
+    	sum = sum + udata[i] * vdata[i];
+    }
+
+    *dest = sum;
+}
